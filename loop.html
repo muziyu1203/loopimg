@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+	html{
+		font-size: 312.5%
+	}
+	#outerDiv{
+		position: relative;
+		width:8rem;
+		height:4rem;
+		overflow: hidden;
+	}
+	#loopDiv{
+		position: relative;
+	/* 	left:-8rem; */
+		width:700%;
+		height: 100%
+	}
+	#loopDiv a{
+		float:left;
+	}
+	#loopDiv img{
+		width:8rem;
+		height:4rem;
+	}
+
+	</style>
+</head>
+<body>
+	<div id="outerDiv">
+		<div id="loopDiv">
+			<a href="#" class="imgZone"><img src="imgs/1.jpg" alt=""></a>
+			<a href="#" class="imgZone"><img src="imgs/2.jpg" alt=""></a>
+			<a href="#" class="imgZone"><img src="imgs/3.jpg" alt=""></a>
+		</div>
+	</div>
+
+<script src="zepto/src/zepto.js"></script>
+<script src="zepto/src/event.js"></script>
+<script src="zepto/src/touch.js"></script>
+	<script>
+	window.onload = init;
+	var i = 0;
+	var ele = document.getElementById("loopDiv");
+	var touchFlag = false;
+	function init(){
+		initLoop();
+		bindEvt();
+	}
+	function initLoop(){
+		var loop = function (){
+			setTimeout(function (){
+				i++;
+				if(i>=3 || i<=0) {
+					i=0;
+				}
+				var offsetx = -i;
+				ele.style.transition = "transform 0.3s ";
+				ele.style.transform = "translate("+offsetx*8+"rem,0)";
+				loop();
+			},5000);
+		}
+		loop();
+	}
+	function bindEvt(){
+		$("#loopDiv").on("swipeLeft",function (){
+			//touchFlag = false;
+			i++;  //alert(i);
+			if(i>=3) { 
+			i=2;
+				return;
+			}
+			var offsetx = -i;
+			ele.style.transition = "transform 0.3s ";
+			ele.style.transform = "translate("+offsetx*8+"rem,0)";
+			//touchFlag = true;
+		
+	   });
+	$("#loopDiv").on("swipeRight",function (){
+		//touchFlag = true;
+			i--;// alert(i);
+			if(i<0) { 
+			i=0;
+				return;
+			}
+			var offsetx = -i;
+			ele.style.transition = "transform 0.3s ";
+			ele.style.transform = "translate("+offsetx*8+"rem,0)";
+			//touchFlag = false;
+	});
+}
+
+
+
+	</script>
+</body>
+</html>
