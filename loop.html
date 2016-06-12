@@ -45,54 +45,126 @@
 	window.onload = init;
 	var i = 0;
 	var ele = document.getElementById("loopDiv");
-	var touchFlag = false;
+	var busy = false;
+	var loopTimer = null;
 	function init(){
 		initLoop();
 		bindEvt();
 	}
-	function initLoop(){
-		var loop = function (){
+
+/*	var LoopImgs = {
+	
+		init: function (domSelector,config){
+			this.dom = $(domSelector);
+			this.index = 0;
+			this.busy = false;
+			this.initLoop();
+		},
+		initLoop : function (){
+			var loop = function (){
 			setTimeout(function (){
 				i++;
 				if(i>=3 || i<=0) {
 					i=0;
 				}
-				var offsetx = -i;
-				ele.style.transition = "transform 0.3s ";
-				ele.style.transform = "translate("+offsetx*8+"rem,0)";
+				gotoIndex(i);
 				loop();
-			},5000);
-		}
-		loop();
-	}
-	function bindEvt(){
-		$("#loopDiv").on("swipeLeft",function (){
+			},3000);
+			}
+			loop();
+		},
+		bindEvt: function (){
+			$("#loopDiv").on("swipeLeft",function (){
 			//touchFlag = false;
 			i++;  //alert(i);
 			if(i>=3) { 
 			i=2;
 				return;
 			}
-			var offsetx = -i;
-			ele.style.transition = "transform 0.3s ";
-			ele.style.transform = "translate("+offsetx*8+"rem,0)";
+			gotoIndex(i);
 			//touchFlag = true;
 		
-	   });
-	$("#loopDiv").on("swipeRight",function (){
+	   	});
+		$("#loopDiv").on("swipeRight",function (){
 		//touchFlag = true;
 			i--;// alert(i);
 			if(i<0) { 
 			i=0;
 				return;
 			}
-			var offsetx = -i;
+			gotoIndex(i);
+			//touchFlag = false;
+		});
+		},
+		gotoIndex: function (i){
+			if(self.busy)return;
+	    	  clearTimeout(self.timer);
+	    	  self.busy = true;
+			  var offsetx = -i;
 			ele.style.transition = "transform 0.3s ";
 			ele.style.transform = "translate("+offsetx*8+"rem,0)";
+			ele.style.webkitTransform = "translate("+offsetx*8+"rem,0)";
+		}
+
+	}*/
+
+
+
+
+	function initLoop(){
+		/*var loop = function (){
+			loopTimer = setTimeout(function (){
+				i++;
+				if(i>=3 || i<=0) {
+					i=0;
+				}
+				gotoIndex(i);
+				loop();
+			},3000);
+		}*/
+		loop();
+	}
+	function loop(){
+		loopTimer = setTimeout(function (){
+			i++;  console.log("自动",i);
+			if(i>=3 || i<=0) {
+				i=0;
+			}
+			gotoIndex(i);
+		},3000);
+	}
+	function bindEvt(){
+		$("#loopDiv").on("swipeLeft",function (){
+			clearTimeout(loopTimer);
+			i++;       console.log("左",i);
+			if(i>=3) { 
+			i=2;
+				return;
+			}
+			gotoIndex(i);
+			//touchFlag = true;
+		
+	   });
+	$("#loopDiv").on("swipeRight",function (){
+		clearTimeout(loopTimer);
+			i--;       console.log("右",i);
+			if(i<0) { 
+			i=0;
+				return;
+			}
+			gotoIndex(i);
 			//touchFlag = false;
 	});
 }
+  
 
+  function gotoIndex(i){ console.log('定位至',i);
+  	var offsetx = -i;
+	ele.style.transition = "transform 0.3s ";
+	ele.style.transform = "translate("+offsetx*8+"rem,0)";
+	ele.style.webkitTransform = "translate("+offsetx*8+"rem,0)";
+	loop();
+  }
 
 
 	</script>
