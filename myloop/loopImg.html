@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>loop image</title>
+    <style>
+        .pas_box_container{
+            width:20rem;
+            height:15rem;
+            overflow: hidden;
+            border:1px solid green;
+        }
+        .pas_box_container img{
+            float:left;
+            width:20rem;
+            height:15rem;
+            margin:0;
+        }
+        .pas_loop_div{
+            height:15rem;
+            margin:0;
+        }
+
+    </style>
+</head>
+<body>
+<div class="pas_box_container">
+    <div id="pas_loop_div">
+        <img src="images/ss1.png" class="pas_loop_img">
+        <img src="images/ss2.png" class="pas_loop_img">
+        <img src="images/ss3.png" class="pas_loop_img">
+    </div>
+</div>
+
+<script src="js/zepto.js"></script>
+<script src="js/event.js"></script>
+<script src="js/touch.js"></script>
+<script>
+var PAS = {};
+
+PAS.LoopImage = {
+    init: function(selector,config){
+        this.box = $(selector);
+        this.config = $.extend({},config||{});
+        this.width = this.config.width||this.box.children().eq(0).width();//滚动的宽度
+        this.size = this.box.children().length;
+        this.box.prepend(this.box.children().eq(this.size-1).clone()).append(this.box.children().eq(1).clone());
+        this.left = -this.width;
+        this.minLeft = -this.size*this.width;
+        this.maxLeft = -this.width;
+        var boxWid = this.width*(this.size+2);
+        this.box.css("width",boxWid);
+        this.animateEffect(false);
+        this.index = 0;
+        this.interval = 3000;   //切换图片的时间间隔
+        this.delayTime = 500;  //动画时间
+        this.timer = null;
+        this.bindEvt();
+        this.autoLoop();
+    },
+    bindEvt: function(){
+        var self = this;
+        this.box.on("swipeLeft",function(){
+            clearTimeout(self.timer);
+            self.index++;
+            self.gotoIndex();
+        });
+        this.box.on("swipeRight",function(){
+            clearTimeout(self.timer);
+            self.index--;
+            self.gotoIndex();
+        });
+    },
+    autoLoop: function(){
+        var self = this;
+        clearTimeout(self.timer);
+        this.timer = setTimeout(function (){
+            self.index++;
+            self.gotoIndex();
+        },this.interval);
+    },
+    gotoIndex: function(){
+        var self = this;
+        if(this.index >=this.size){  //向右 直至到达最后一张图片
+            this.left = -(this.index+1)*this.width;
+            this.animateEffect();
+            this.index = 0;
+            this.left = -this.width;
+            setTimeout(function(){  //动画过渡完成后，立即将容器切换回到初始位置  left赋为 -width
+                self.animateEffect(false);
+                self.autoLoop();
+            },this.delayTime);
+        }else if(this.index <= -1){ //向左，直至到达第一张图片
+            this.left = -(this.index+1)*this.width;
+            this.animateEffect();
+            this.index = this.size-1;
+            this.left = -this.size*this.width;
+            setTimeout(function(){  //动画过渡完成
+                self.animateEffect(false);
+                self.autoLoop();
+            },this.delayTime);
+        }else{
+            this.left = -(this.index+1)*this.width;
+            this.animateEffect();
+            this.autoLoop();
+        }
+    },
+
+    //是否使用动画效果
+    animateEffect: function(isEffect){
+        isEffect = typeof isEffect =='undefined' ? true : isEffect;
+        var x = this.left;  console.log(x);
+        var time = isEffect ? this.delayTime : 0;
+        var style = {
+            '-webkit-transition':'-webkit-transform '+time+'ms',
+            '-webkit-transform':'translate3d('+x+'px,0,0)',
+            '-webkit-backface-visibility': 'hidden',
+            'transition':'transform '+time+'ms',
+            'transform':'translate3d('+x+'px,0,0)'
+        };
+        this.box.css(style);
+    }
+};
+
+PAS.LoopImage.init("#pas_loop_div");
+
+</script>
+
+</body>
+</html>
